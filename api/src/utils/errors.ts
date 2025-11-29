@@ -33,3 +33,9 @@ export class ConflictError extends HttpError {
     super(message, 409);
   }
 }
+
+export class BadGatewayError extends HttpError {
+  constructor(message: string) {
+    super(message, 502);
+  }
+}

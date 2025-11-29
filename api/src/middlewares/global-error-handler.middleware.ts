@@ -8,23 +8,22 @@ export function globalErrorHandler(error: Error, req: Request, res: Response, ne
   
   // If we throw our custom HttpError(ex: 404 NOT FOUND)
   if (error instanceof HttpError) {
-    console.info(error);
     res.status(error.statusCode).json({ error: error.message });
     return;
   }
 
   // If error is sent from jsonwebtoken -> error 401 UNAUTHORIZED 
+  if (error instanceof jwt.TokenExpiredError) { 
+    res.status(401).json({ error: `Expired JWT token` });
+    return;
+  }
   if (error instanceof jwt.JsonWebTokenError) { 
-      throw new UnauthorizedError(`JWT error: ${error.message}`);
-    }
-    if (error instanceof jwt.TokenExpiredError) { 
-      throw new UnauthorizedError(`Expired JWT token`);
-    }
+    res.status(401).json({ error: `JWT error: ${error.message}` });
+    return;
+  }
 
   // If error is related to validation -> error 422 UNPROCESSABLE ENTITY
   if (error instanceof z.ZodError) {
-    // Alors, on renvoie une 422
-    console.info(error);
     res.status(422).json({ error: z.prettifyError(error) });
     return; 
   }
