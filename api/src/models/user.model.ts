@@ -1,4 +1,5 @@
 import argon2 from "argon2"
+import jwt from "jsonwebtoken";
 import { UserDatamapper } from "../datamappers/user.datamapper.ts";
 import type { RegisterInput } from "../validation/auh.validation.ts";
 
@@ -28,6 +29,7 @@ export class User {
     return new User(user);
   }
 
+  // Hash password and save user in database
   static async createAccount(newUser: RegisterInput) {
     // Hash password with argon2 
     const hashedPassword = await argon2.hash(newUser.password);
@@ -41,5 +43,19 @@ export class User {
   hidePassword() {
     const { password, ...user } = this;
     return user;
+  }
+
+  // Check if a password match with the current user password
+  verifyPassword(passwordToCheck: string) {
+    return argon2.verify(this.password, passwordToCheck);
+  }
+
+  generateAccessToken() {
+    // If no JWT_SECRET in environment variables --> Error 500
+    if(!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+    // Return the jwt (sub: subject)
+    return jwt.sign({ sub: this.id}, process.env.JWT_SECRET, { expiresIn: '4h' });
   }
 }
