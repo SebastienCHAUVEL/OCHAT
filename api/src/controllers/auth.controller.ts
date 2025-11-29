@@ -33,10 +33,10 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   }
 
   // Generate access token
-  const token = user.generateAccessToken(); 
+  const accessToken = user.generateAccessToken(); 
   
   res.json({
     ...user.hidePassword(), 
-    token 
+    accessToken 
   });
 }

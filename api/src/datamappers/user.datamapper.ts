@@ -1,8 +1,22 @@
 import client from "../config/database.client.ts";
-import type { UserRecord } from "../models/user.model.ts";
 import type { RegisterInput } from "../validation/auh.validation.ts";
 
+export interface UserRecord {
+  id: number,
+  username: string,
+  password: string
+}
+
 export class UserDatamapper {
+  static async findByid(id: number): Promise<UserRecord | null> {
+    const preparedQuery = {
+      text: `SELECT * FROM "user" WHERE id=$1`,
+      values: [ id ],
+    }
+    const result = await client.query(preparedQuery);
+    return result.rows[0] ?? null;
+  }
+
   static async findByName(username: string): Promise<UserRecord | null> {
     const preparedQuery = {
       text: `SELECT * FROM "user" WHERE username=$1`,

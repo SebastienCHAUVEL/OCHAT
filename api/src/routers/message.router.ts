@@ -3,5 +3,5 @@ import { getMessagesByConversationId, postMessage } from "../controllers/message
 
 export const messageRouter = Router();
 
-messageRouter.get("/:conversationId", getMessagesByConversationId);
+messageRouter.get("/", getMessagesByConversationId);
 messageRouter.post("/", postMessage);

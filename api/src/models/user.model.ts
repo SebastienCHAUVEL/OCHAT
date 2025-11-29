@@ -1,13 +1,12 @@
 import argon2 from "argon2"
-import jwt from "jsonwebtoken";
-import { UserDatamapper } from "../datamappers/user.datamapper.ts";
+import jwt, { type JwtPayload } from "jsonwebtoken";
+import { UserDatamapper, type UserRecord } from "../datamappers/user.datamapper.ts";
 import type { RegisterInput } from "../validation/auh.validation.ts";
 
-export interface UserRecord {
-  id: number,
-  username: string,
-  password: string
+interface accessTokenPayload extends JwtPayload {
+  sub: string
 }
+
 export class User {
   id: number;
   username: string;
@@ -29,7 +28,7 @@ export class User {
     return new User(user);
   }
 
-  // Hash password and save user in database
+  // Hash password and save user in database and return an instance of user
   static async createAccount(newUser: RegisterInput) {
     // Hash password with argon2 
     const hashedPassword = await argon2.hash(newUser.password);
@@ -37,6 +36,25 @@ export class User {
     const createdUser = await UserDatamapper.create({ ...newUser, password: hashedPassword });
 
     return new User(createdUser);
+  }
+
+  // Check access token and return an instance of user
+  static async verifyAccessToken(accessToken: string) {
+    // If no JWT_SECRET in environment variables --> Error 500
+    if(!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
+    // Verify jwt and get an access token payload: { sub: userId, iat: issued at, exp: expire at }
+    const data = jwt.verify(accessToken, process.env.JWT_SECRET) as accessTokenPayload;
+    
+    // Get the user by id
+    const user = await UserDatamapper.findByid(parseInt(data.sub));
+    if(!user) {
+      return null;
+    }
+
+    return new User(user)
   }
 
   // hide the password in an instance of user
@@ -50,6 +68,7 @@ export class User {
     return argon2.verify(this.password, passwordToCheck);
   }
 
+  // Generate an access token
   generateAccessToken() {
     // If no JWT_SECRET in environment variables --> Error 500
     if(!process.env.JWT_SECRET) {
