@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { router } from "./index.ts";
 import { login, register } from "../controllers/auth.controller.ts";
+import { registerSchema } from "../validation/auh.validation.ts";
+import { validate } from "../middlewares/validation.middleware.ts";
 
 export const authRouter = Router();
 
-router.post("/register", register);
-router.post("/login", login);
+authRouter.post("/register", validate("body", registerSchema), register);
+authRouter.post("/login", login);
