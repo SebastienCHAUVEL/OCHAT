@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { askLlm } from "../controllers/prompt.controller.ts";
+import { askMistral } from "../controllers/prompt.controller.ts";
 
 export const promptRouter = Router();
 
-promptRouter.post("/", askLlm);
+promptRouter.post("/mistral", askMistral);
