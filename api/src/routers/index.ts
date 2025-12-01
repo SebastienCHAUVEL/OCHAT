@@ -7,5 +7,5 @@ import { checkLogin } from "../middlewares/check-authorization.middleware.ts";
 export const router = Router();
 
 router.use("/auth", authRouter);
-router.use("/conversations", conversationRouter);
-router.use("/prompt", checkLogin, promptRouter);
+router.use("/conversations", checkLogin, conversationRouter);
+router.use("/prompt", promptRouter);

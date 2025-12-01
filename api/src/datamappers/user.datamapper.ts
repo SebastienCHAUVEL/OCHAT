@@ -8,7 +8,7 @@ export interface UserRecord {
 }
 
 export interface UserWithConversationRecord extends UserRecord{
-  conversation_id: number,
+  conversationId: number,
   title: string
 }
 
@@ -24,11 +24,11 @@ export class UserDatamapper {
 
   static async findByidWithConversations(id: number): Promise<Array<UserWithConversationRecord> | null> {
     const preparedQuery = {
-      text: `SELECT * FROM "user" as u JOIN "conversation" as c ON c.user_id=u.id WHERE id=$1`,
+      text: `SELECT u.*, c.title, c.id as "conversationId" FROM "user" as u JOIN "conversation" as c ON c.user_id=u.id WHERE u.id=$1`,
       values: [ id ],
     }
     const result = await client.query(preparedQuery);
-    return result.rows[0] ?? null;
+    return result.rows ?? null;
   }
 
   static async findByName(username: string): Promise<UserRecord | null> {

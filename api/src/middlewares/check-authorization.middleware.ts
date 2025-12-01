@@ -34,7 +34,8 @@ export async function checkConversationAuthor(req: Request, res: Response, next:
 
   // Get the current user with his conversations
   const currentUser = await User.findByIdWithConversations(userId);
-  // If no currentUser found, it means no conversation is found for the current user
+  
+  // If no currentUser found, it means no conversation is found for the current user, so he cannot own the conversation
   if(!currentUser) {
     next(new ForbiddenError(`You must own the conversation to access this section`))
     return;
@@ -45,6 +46,7 @@ export async function checkConversationAuthor(req: Request, res: Response, next:
     currentUser.conversations
       .map((conversation) => conversation.id === conversationId)
       .includes(true);
+  
   if(!isAuthor){
     next(new ForbiddenError(`You must own the conversation to access this section`))
     return;

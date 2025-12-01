@@ -5,7 +5,7 @@ export interface ConversationRecord {
 }
 
 export class ConversationDatamapper {
-  static async findConversationByUserId (userId: number) {
+  static async findAllConversationsByUserId (userId: number) {
     
   }
 }

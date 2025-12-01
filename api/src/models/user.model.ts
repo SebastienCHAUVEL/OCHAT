@@ -3,7 +3,7 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 import { UserDatamapper, type UserRecord } from "../datamappers/user.datamapper.ts";
 import type { RegisterInput } from "../validation/auh.validation.ts";
 import { idNumSchema, type idNum } from "../validation/utils.validation.ts";
-import { Conversation } from "./conversation.model.js";
+import { Conversation } from "./conversation.model.ts";
 import type { ConversationRecord } from "../datamappers/conversation.datamapper.ts";
 
 interface accessTokenPayload extends JwtPayload {
@@ -47,13 +47,13 @@ export class User {
     if(!data) {
       return null;
     }
-
+    
     // Each element of data contain the same userRecord, we only need one
     const userRecord = data[0];
     // Extract conversations from data
     const conversationRecords = data.map((element) => {
       return {
-        id: element.conversation_id, 
+        id: element.conversationId, 
         title: element.title,
         userId: element.id 
       }
