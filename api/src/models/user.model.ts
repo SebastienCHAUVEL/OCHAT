@@ -2,7 +2,7 @@ import argon2 from "argon2"
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { UserDatamapper, type UserRecord } from "../datamappers/user.datamapper.ts";
 import type { RegisterInput } from "../validation/auh.validation.ts";
-import { idNumSchema, type idNum } from "../validation/utils.validation.ts";
+import { idNumSchema } from "../validation/utils.validation.ts";
 import { Conversation } from "./conversation.model.ts";
 import type { ConversationRecord } from "../datamappers/conversation.datamapper.ts";
 
@@ -32,7 +32,7 @@ export class User {
   }
 
   // Find user by id
-  static async findById(id: idNum) {
+  static async findById(id: number) {
     const user = await UserDatamapper.findByid(id);
     if(!user) {
       return null;
@@ -42,7 +42,7 @@ export class User {
   }
 
   // Find user by id with user conversations
-  static async findByIdWithConversations(id: idNum) {
+  static async findByIdWithConversations(id: number) {
     const data = await UserDatamapper.findByidWithConversations(id);
     if(!data) {
       return null;
