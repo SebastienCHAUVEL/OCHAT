@@ -4,13 +4,14 @@ import { messageRouter } from "./message.router.ts";
 import { checkConversationAuthor } from "../middlewares/check-authorization.middleware.ts";
 import { validate } from "../middlewares/validation.middleware.ts";
 import { idParamsSchema } from "../validation/utils.validation.ts";
+import { createConversationSchema } from "../validation/conversation.validation.ts";
 
 export const conversationRouter = Router();
 
 conversationRouter
   .route("/")
   .get(getUserConversations)
-  .post(postConversation)
+  .post(validate("body", createConversationSchema), postConversation)
   
 conversationRouter
   .route("/:id")
