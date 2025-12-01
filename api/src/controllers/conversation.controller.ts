@@ -4,8 +4,8 @@ import { Conversation } from "../models/conversation.model.ts";
 
 export async function getUserConversations(req: Request, res: Response) {
   // Parsing id into numeric id
-
   const userId = idNumSchema.parse(req.headers['x-user-id']);
+
   // Find all conversations of the current user
   const conversations = await Conversation.findAllByUserId(userId);
 
@@ -13,10 +13,11 @@ export async function getUserConversations(req: Request, res: Response) {
 }
 
 export async function postConversation(req: Request, res: Response) {
+  // Parsing id into numeric id
   const userId = idNumSchema.parse(req.headers['x-user-id'])
 
+  // Create a new conversation in database 
   const createdConversation = await Conversation.create({ userId: userId, title: req.body.title });
-  console.log(createdConversation);
 
   res.status(201).json(createdConversation);
 
