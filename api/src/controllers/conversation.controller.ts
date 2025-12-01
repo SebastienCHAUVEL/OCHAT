@@ -28,15 +28,24 @@ export async function patchConversationById(req: Request, res: Response, next: N
   // Parsing id into numeric id
   const id = idNumSchema.parse(req.params.id);
 
+  // Update conversation in database
   const updatedConversation = await Conversation.updateTitleById(id, req.body.title);
 
+  // Check if we found the conversation
   if(!updatedConversation) {
-    next(new NotFoundError("Conversation not found"))
+    next(new NotFoundError("Conversation not found"));
+    return;
   }
 
   res.json(updatedConversation)
 }
 
-export async function deleteConversationById(req: Request, res: Response) {
-  
+export async function deleteConversationById(req: Request, res: Response, next: NextFunction) {
+  // Parsing id into numeric id
+  const id = idNumSchema.parse(req.params.id);
+
+  // Removing the conversation in database
+  await Conversation.removeById(id);
+
+  res.status(204).end();
 }

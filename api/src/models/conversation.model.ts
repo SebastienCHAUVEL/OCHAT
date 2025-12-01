@@ -1,4 +1,5 @@
 import { ConversationDatamapper, type ConversationRecord } from "../datamappers/conversation.datamapper.ts";
+import { UserDatamapper } from "../datamappers/user.datamapper.ts";
 import type { createConversationInput } from "../validation/conversation.validation.ts";
 
 export interface ConversationToSave extends createConversationInput {
@@ -14,6 +15,12 @@ export class Conversation {
     this.id = conversation.id;
     this.title = conversation.title;
     this.userId = conversation.userId;
+  }
+
+  static async findById(id: number){
+    const conversation = await ConversationDatamapper.findById(id);
+    if(!conversation) return null;
+    return new Conversation(conversation);
   }
 
   static async findAllByUserId(userId: number) {
@@ -33,5 +40,9 @@ export class Conversation {
     if(!conversationRecord) return null;
 
     return new Conversation(conversationRecord);
+  }
+
+  static async removeById(id: number) {
+    return await ConversationDatamapper.removeById(id);
   }
 }

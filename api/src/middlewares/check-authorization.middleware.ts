@@ -1,7 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import { User } from "../models/user.model.ts";
-import { ForbiddenError, UnauthorizedError } from "../utils/errors.ts";
+import { ForbiddenError, NotFoundError, UnauthorizedError } from "../utils/errors.ts";
 import { idNumSchema } from "../validation/utils.validation.ts";
+import { Conversation } from "../models/conversation.model.ts";
+import { ConversationDatamapper } from "../datamappers/conversation.datamapper.ts";
 
 export async function checkLogin(req: Request, res: Response, next: NextFunction) {
   // extract authorizaion header
@@ -31,6 +33,13 @@ export async function checkConversationAuthor(req: Request, res: Response, next:
   // Parse id's into numerics id
   const userId = idNumSchema.parse(req.headers['x-user-id']);
   const conversationId = idNumSchema.parse(req.params.id);
+
+  // Making sure the conversation exist in database
+  const conversation = await Conversation.findById(conversationId);
+  if(!conversation) {
+    next(new NotFoundError(`Conversation not found`));
+    return;
+  }
 
   // Get the current user with his conversations
   const currentUser = await User.findByIdWithConversations(userId);
