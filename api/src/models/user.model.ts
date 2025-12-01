@@ -2,6 +2,9 @@ import argon2 from "argon2"
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { UserDatamapper, type UserRecord } from "../datamappers/user.datamapper.ts";
 import type { RegisterInput } from "../validation/auh.validation.ts";
+import { idNumSchema, type idNum } from "../validation/utils.validation.ts";
+import { Conversation } from "./conversation.model.js";
+import type { ConversationRecord } from "../datamappers/conversation.datamapper.ts";
 
 interface accessTokenPayload extends JwtPayload {
   sub: string
@@ -28,6 +31,38 @@ export class User {
     return new User(user);
   }
 
+  // Find user by id
+  static async findById(id: idNum) {
+    const user = await UserDatamapper.findByid(id);
+    if(!user) {
+      return null;
+    }
+
+    return new User(user);
+  }
+
+  // Find user by id with user conversations
+  static async findByIdWithConversations(id: idNum) {
+    const data = await UserDatamapper.findByidWithConversations(id);
+    if(!data) {
+      return null;
+    }
+
+    // Each element of data contain the same userRecord, we only need one
+    const userRecord = data[0];
+    // Extract conversations from data
+    const conversationRecords = data.map((element) => {
+      return {
+        id: element.conversation_id, 
+        title: element.title,
+        userId: element.id 
+      }
+    });
+
+    // Build an instance of UserWithConversations
+    return new UserWithConversations(userRecord, conversationRecords);
+  }
+
   // Hash password and save user in database and return an instance of user
   static async createAccount(newUser: RegisterInput) {
     // Hash password with argon2 
@@ -47,14 +82,12 @@ export class User {
 
     // Verify jwt and get an access token payload: { sub: userId, iat: issued at, exp: expire at }
     const data = jwt.verify(accessToken, process.env.JWT_SECRET) as accessTokenPayload;
+
+    // Parsing sub into numeric id 
+    const userId = idNumSchema.parse(data.sub)
     
     // Get the user by id
-    const user = await UserDatamapper.findByid(parseInt(data.sub));
-    if(!user) {
-      return null;
-    }
-
-    return new User(user)
+    return await User.findById(userId)
   }
 
   // hide the password in an instance of user
@@ -76,5 +109,14 @@ export class User {
     }
     // Return the jwt (sub: subject)
     return jwt.sign({ sub: this.id}, process.env.JWT_SECRET, { expiresIn: '4h' });
+  }
+}
+
+export class UserWithConversations extends User {
+  conversations: Array<Conversation> ;
+  constructor(user: UserRecord, conversations: Array<ConversationRecord>) {
+    super(user);
+    // Adding array of instance of conversation
+    this.conversations = conversations.map((conversation) => new Conversation(conversation));
   }
 }

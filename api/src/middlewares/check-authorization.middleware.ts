@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { User } from "../models/user.model.ts";
-import { UnauthorizedError } from "../utils/errors.ts";
+import { ForbiddenError, UnauthorizedError } from "../utils/errors.ts";
+import { idNumSchema } from "../validation/utils.validation.ts";
 
 export async function checkLogin(req: Request, res: Response, next: NextFunction) {
   // extract authorizaion header
@@ -26,6 +27,28 @@ export async function checkLogin(req: Request, res: Response, next: NextFunction
   next();
 }
 
-export function checkConversationAuthor(req: Request, res: Response, next: NextFunction) {
+export async function checkConversationAuthor(req: Request, res: Response, next: NextFunction) {
+  // Parse id's into numerics id
+  const userId = idNumSchema.parse(req.headers['x-user-id']);
+  const conversationId = idNumSchema.parse(req.params.id);
 
+  // Get the current user with his conversations
+  const currentUser = await User.findByIdWithConversations(userId);
+  // If no currentUser found, it means no conversation is found for the current user
+  if(!currentUser) {
+    next(new ForbiddenError(`You must own the conversation to access this section`))
+    return;
+  }
+
+  // Check if the current user's conversations contain the conversation.
+  const isAuthor = 
+    currentUser.conversations
+      .map((conversation) => conversation.id === conversationId)
+      .includes(true);
+  if(!isAuthor){
+    next(new ForbiddenError(`You must own the conversation to access this section`))
+    return;
+  }
+
+  next();
 }

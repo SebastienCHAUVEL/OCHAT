@@ -7,10 +7,24 @@ export interface UserRecord {
   password: string
 }
 
+export interface UserWithConversationRecord extends UserRecord{
+  conversation_id: number,
+  title: string
+}
+
 export class UserDatamapper {
   static async findByid(id: number): Promise<UserRecord | null> {
     const preparedQuery = {
       text: `SELECT * FROM "user" WHERE id=$1`,
+      values: [ id ],
+    }
+    const result = await client.query(preparedQuery);
+    return result.rows[0] ?? null;
+  }
+
+  static async findByidWithConversations(id: number): Promise<Array<UserWithConversationRecord> | null> {
+    const preparedQuery = {
+      text: `SELECT * FROM "user" as u JOIN "conversation" as c ON c.user_id=u.id WHERE id=$1`,
       values: [ id ],
     }
     const result = await client.query(preparedQuery);
