@@ -3,7 +3,6 @@ import type { messsagePromptInput } from "../validation/prompt.validation.ts";
 // Fetch Mistral 
 export async function fetchMistral(messages: messsagePromptInput, model: string) {
   const url = `${process.env.MISTRAL_BASE_URL}${process.env.MISTRAL_ENDPOINT}`;
-  console.log(process.env.MISTRAL_API_KEY);
   
   const response = await fetch(
     url,
