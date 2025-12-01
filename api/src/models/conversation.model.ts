@@ -1,5 +1,4 @@
 import { ConversationDatamapper, type ConversationRecord } from "../datamappers/conversation.datamapper.ts";
-import type { idNum } from "../validation/utils.validation.ts";
 
 export class Conversation {
   id: number;
@@ -12,6 +11,6 @@ export class Conversation {
     this.userId = conversation.userId;
   }
   static async findAllByUserId(userId: number) {
-    return await ConversationDatamapper.findAllConversationsByUserId(userId);
+    return await ConversationDatamapper.findAllByUserId(userId);
   }
 }

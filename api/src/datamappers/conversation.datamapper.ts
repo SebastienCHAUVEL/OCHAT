@@ -7,7 +7,7 @@ export interface ConversationRecord {
 }
 
 export class ConversationDatamapper {
-  static async findAllConversationsByUserId (userId: number): Promise<Array<ConversationRecord> | null> {
+  static async findAllByUserId (userId: number): Promise<Array<ConversationRecord> | null> {
     const preparedQuery = {
       text: `SELECT * FROM "conversation" WHERE "user_id"=$1`,
       values: [ userId ],
