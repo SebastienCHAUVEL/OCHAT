@@ -4,7 +4,7 @@ import { messageRouter } from "./message.router.ts";
 import { checkConversationAuthor } from "../middlewares/check-authorization.middleware.ts";
 import { validate } from "../middlewares/validation.middleware.ts";
 import { idParamsSchema } from "../validation/utils.validation.ts";
-import { createConversationSchema } from "../validation/conversation.validation.ts";
+import { createConversationSchema, updateConversationSchema } from "../validation/conversation.validation.ts";
 
 export const conversationRouter = Router();
 
@@ -19,7 +19,7 @@ conversationRouter
     validate("params", idParamsSchema), 
     checkConversationAuthor
   )
-  .patch(patchConversationById)
+  .patch(validate("body", updateConversationSchema), patchConversationById)
   .delete(deleteConversationById)
 
 conversationRouter.use(

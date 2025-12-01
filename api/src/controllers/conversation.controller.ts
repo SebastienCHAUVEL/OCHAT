@@ -1,6 +1,7 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { idNumSchema } from "../validation/utils.validation.ts";
 import { Conversation } from "../models/conversation.model.ts";
+import { NotFoundError } from "../utils/errors.ts";
 
 export async function getUserConversations(req: Request, res: Response) {
   // Parsing id into numeric id
@@ -23,8 +24,17 @@ export async function postConversation(req: Request, res: Response) {
 
 }
 
-export async function patchConversationById(req: Request, res: Response) {
-  res.json("Modification résussit")
+export async function patchConversationById(req: Request, res: Response, next: NextFunction) {
+  // Parsing id into numeric id
+  const id = idNumSchema.parse(req.params.id);
+
+  const updatedConversation = await Conversation.updateTitleById(id, req.body.title);
+
+  if(!updatedConversation) {
+    next(new NotFoundError("Conversation not found"))
+  }
+
+  res.json(updatedConversation)
 }
 
 export async function deleteConversationById(req: Request, res: Response) {

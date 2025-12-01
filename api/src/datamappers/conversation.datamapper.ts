@@ -29,4 +29,18 @@ export class ConversationDatamapper {
     
     return result.rows[0];
   }
+
+  static async updateTitleById(id: number, newTitle: string): Promise<ConversationRecord | null> {
+    const preparedQuery = {
+      text: `UPDATE "conversation" SET "title" = $1 WHERE "id"=$2 RETURNING "id", "title", "user_id" as "userId"`,
+      values: [
+        newTitle,
+        id,
+      ]
+    }
+    const result = await client.query(preparedQuery);
+    
+    return result.rows[0] ?? null;
+    
+  }
 }

@@ -26,4 +26,12 @@ export class Conversation {
     const conversationRecord = await ConversationDatamapper.create(newConversation);
     return new Conversation(conversationRecord);
   }
+
+  static async updateTitleById(id: number, newTitle: string) {
+    const conversationRecord = await ConversationDatamapper.updateTitleById(id, newTitle);
+
+    if(!conversationRecord) return null;
+
+    return new Conversation(conversationRecord);
+  }
 }

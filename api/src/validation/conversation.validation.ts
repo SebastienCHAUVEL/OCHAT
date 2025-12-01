@@ -5,3 +5,9 @@ export const createConversationSchema = z.object({
   });
 
 export type createConversationInput = z.infer<typeof createConversationSchema>;
+
+export const updateConversationSchema = z.object({
+    title: z.string().min(1),
+  });
+
+export type updateConversationInput = z.infer<typeof updateConversationSchema>;
