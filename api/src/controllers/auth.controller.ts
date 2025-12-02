@@ -11,7 +11,19 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     return;
   }
 
+  // Create new user in database
   const newUser = await User.createAccount(req.body);
+
+  // Generate access token
+  const accessToken = newUser.generateAccessToken(); 
+
+  // Set access token in cookies
+  res.cookie("accessToken", accessToken, {
+    maxAge: 4 * 60 * 60 * 1000, // 4h
+    httpOnly: true,              // -> front does not have access
+    // secure: true,                // HTTPS only (prod)
+    sameSite: 'strict',          // CSRF Protection 
+  });
 
   res.status(201).json(newUser.hidePassword());
 
@@ -34,9 +46,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
   // Generate access token
   const accessToken = user.generateAccessToken(); 
-  
-  res.json({
-    ...user.hidePassword(), 
-    accessToken 
+
+  // Set access token in cookies
+  res.cookie("accessToken", accessToken, {
+    maxAge: 4 * 60 * 60 * 1000, // 4h
+    httpOnly: true,              // -> front does not have access
+    // secure: true,                // HTTPS only (prod)
+    sameSite: 'strict',          // CSRF Protection 
   });
+  
+  res.json(user.hidePassword());
 }
