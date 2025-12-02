@@ -20,5 +20,7 @@ export async function getConversationMessagesbyId(req: Request, res: Response, n
 }
 
 export async function postMessage(req: Request, res: Response) {
-  
+  const createdMessage = await Message.create(req.body);
+
+  res.status(201).json(createdMessage);
 }

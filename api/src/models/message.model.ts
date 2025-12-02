@@ -1,4 +1,5 @@
 import { MessageDatamapper, type MessageRecord } from "../datamappers/message.datamapper.ts";
+import type { createMessageInput } from "../validation/message.validation.ts";
 
 export class Message {
   id: number;
@@ -19,5 +20,11 @@ export class Message {
     if(!messageRecords) return null;
 
     return messageRecords.map((msg) => new Message(msg));
+  }
+
+  static async create(newMessage: createMessageInput) {
+    const messageRecord = await MessageDatamapper.create(newMessage);
+
+    return new Message(messageRecord);
   }
 }
