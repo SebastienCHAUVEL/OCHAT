@@ -1,5 +1,4 @@
 import { ConversationDatamapper, type ConversationRecord } from "../datamappers/conversation.datamapper.ts";
-import { UserDatamapper } from "../datamappers/user.datamapper.ts";
 import type { createConversationInput } from "../validation/conversation.validation.ts";
 
 export interface ConversationToSave extends createConversationInput {

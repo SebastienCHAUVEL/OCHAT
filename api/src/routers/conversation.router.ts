@@ -22,9 +22,4 @@ conversationRouter
   .patch(validate("body", updateConversationSchema), patchConversationById)
   .delete(deleteConversationById)
 
-conversationRouter.use(
-  "/:id/messages", 
-  validate("params", idParamsSchema), 
-  checkConversationAuthor, 
-  messageRouter
-);
+conversationRouter.use(messageRouter);

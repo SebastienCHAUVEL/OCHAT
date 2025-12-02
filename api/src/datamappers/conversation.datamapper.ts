@@ -22,7 +22,7 @@ export class ConversationDatamapper {
       values: [ userId ],
     }
     const result = await client.query(preparedQuery);
-    return result.rows ?? null;
+    return result.rows.length ? result.rows : null;
   }
 
   static async create(newConversation: ConversationToSave): Promise<ConversationRecord> {
