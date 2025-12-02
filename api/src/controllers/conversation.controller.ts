@@ -3,12 +3,18 @@ import { idNumSchema } from "../validation/utils.validation.ts";
 import { Conversation } from "../models/conversation.model.ts";
 import { NotFoundError } from "../utils/errors.ts";
 
-export async function getUserConversations(req: Request, res: Response) {
+export async function getUserConversations(req: Request, res: Response, next: NextFunction) {
   // Parsing id into numeric id
   const userId = idNumSchema.parse(req.headers['x-user-id']);
 
   // Find all conversations of the current user
   const conversations = await Conversation.findAllByUserId(userId);
+
+  // Check if we found conversations for the current user
+  if(!conversations) {
+    next(new NotFoundError("No conversation found for the current user"));
+    return;
+  }
 
   res.json(conversations);
 }

@@ -3,7 +3,6 @@ import { User } from "../models/user.model.ts";
 import { ForbiddenError, NotFoundError, UnauthorizedError } from "../utils/errors.ts";
 import { idNumSchema } from "../validation/utils.validation.ts";
 import { Conversation } from "../models/conversation.model.ts";
-import { ConversationDatamapper } from "../datamappers/conversation.datamapper.ts";
 
 export async function checkLogin(req: Request, res: Response, next: NextFunction) {
   // extract authorizaion header
