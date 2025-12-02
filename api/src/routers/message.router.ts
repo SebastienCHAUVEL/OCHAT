@@ -3,6 +3,7 @@ import { getConversationMessagesbyId, postMessage } from "../controllers/message
 import { validate } from "../middlewares/validation.middleware.ts";
 import { checkConversationAuthor } from "../middlewares/check-authorization.middleware.ts";
 import { idParamsSchema } from "../validation/utils.validation.ts";
+import { createMessageSchema } from "../validation/message.validation.ts";
 
 export const messageRouter = Router();
 
@@ -13,7 +14,7 @@ messageRouter
     checkConversationAuthor, 
   )
   .get(getConversationMessagesbyId)
-  .post(postMessage);
+  .post(validate("body", createMessageSchema), postMessage);
 
 
 
