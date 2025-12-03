@@ -8,6 +8,6 @@ import { userRouter } from "./user.router.ts";
 export const router = Router();
 
 router.use("/auth", authRouter);
-router.use('/users', checkLogin, userRouter)
+router.use("/users", checkLogin, userRouter)
 router.use("/conversations", checkLogin, conversationRouter);
 router.use("/prompt", promptRouter);

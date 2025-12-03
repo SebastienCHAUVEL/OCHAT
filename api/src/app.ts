@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 // Allow Cross-Origin Requests
-app.use(cors({ origin: process.env.ALLOWED_ORIGIN }));
+app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
 
 // Body parser
 app.use(express.json());

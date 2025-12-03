@@ -6,7 +6,7 @@ import { Conversation } from "../models/conversation.model.ts";
 
 export async function checkLogin(req: Request, res: Response, next: NextFunction) {
   // Check if access token is in cookies
-  if(typeof req.cookies.accessToken !== "string") {
+  if(typeof req.cookies.accessToken !== "string" || req.cookies.accessToken === "") {
     next(new UnauthorizedError("You must be logged in to access this section"))
     return;
   }
@@ -19,7 +19,7 @@ export async function checkLogin(req: Request, res: Response, next: NextFunction
     next(new UnauthorizedError("You must be logged in to access this section"))
     return;
   }
-
+  
   // Save user for next middlewares
   req.headers['x-user-id'] = `${user.id}`;
 
