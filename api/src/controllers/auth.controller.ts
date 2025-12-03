@@ -56,3 +56,15 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   
   res.json(user.hidePassword());
 }
+
+export async function logout(_: any, res: Response) {
+  // Set access token in cookies
+  res.cookie("accessToken", "", {
+    maxAge: 10 * 1000, // 10s
+    httpOnly: true,              // -> front does not have access to cookies
+    secure: process.env.NODE_ENV === 'production', // true en prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  });
+  
+  res.status(204).end();
+}
