@@ -3,15 +3,15 @@ import z from "zod";
 export const registerSchema = z.object({
     username: z.string().min(1),
     password: z.string()
-      .min(8)
-      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Must contain at least one number")
-      .regex(/[\W_]/, "Must contain at least one special character"),
+      .min(8, "✖ Password must contain at least 8 characters")
+      .regex(/[A-Z]/, "✖ Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "✖ Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "✖ Password must contain at least one number")
+      .regex(/[\W_]/, "✖ Password must contain at least one special character"),
     passwordConfirmation: z.string(),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
-      message: "Password and confirmation does not match",
+      message: "✖ Password and confirmation does not match",
       path: ["passwordConfirmation"],
   });
 

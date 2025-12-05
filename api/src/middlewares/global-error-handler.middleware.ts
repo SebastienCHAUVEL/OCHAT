@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { HttpError, UnauthorizedError } from "../utils/errors.ts";
 import jwt from "jsonwebtoken";
 import z from "zod";
+import { prettifyZodError } from "../utils/formatZodError.ts";
 
 // Error handler middleware (when error is thrown, express catch it and look for a middleware with 4 parameters: error, req, res, next)
 export function globalErrorHandler(error: Error, req: Request, res: Response, next: NextFunction) {
@@ -24,9 +25,10 @@ export function globalErrorHandler(error: Error, req: Request, res: Response, ne
 
   // If error is related to validation -> error 422 UNPROCESSABLE ENTITY
   if (error instanceof z.ZodError) {
-    res.status(422).json({ error: z.prettifyError(error) });
+    res.status(422).json({ error: prettifyZodError(JSON.parse(error.message)) });
     return; 
   }
+
   console.error(error);
 
   // Unexpected error --> error 500 INTERNAL SERVER ERROR
