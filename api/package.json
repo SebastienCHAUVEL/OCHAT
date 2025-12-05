@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "node --watch index.ts"
+    "dev": "node --watch index.ts",
+    "start": "node index.ts"
   },
   "keywords": [],
   "author": "",
