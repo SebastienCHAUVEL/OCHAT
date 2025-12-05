@@ -19,9 +19,9 @@ export async function register(req: Request, res: Response, next: NextFunction) 
   // Set access token in cookies
   res.cookie("accessToken", accessToken, {
     maxAge: 4 * 60 * 60 * 1000, // 4h
-    httpOnly: true,              // -> front does not have access
-    // secure: true,                // HTTPS only (prod)
-    sameSite: 'strict',          // CSRF Protection 
+    httpOnly: true,              // -> front does not have access to cookies
+    secure: process.env.NODE_ENV === 'production', // true en prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   });
 
   res.status(201).json(newUser.hidePassword());
